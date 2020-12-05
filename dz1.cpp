@@ -29,9 +29,9 @@ Graf::Graf(int dim) {
 	cvorovi.resize(dim);
 	grane.resize(dim, vector<int>(dim, 0));
 	for (int i = 0; i < dim; i++) {
-		cvorovi[i] = "";		// prazan string = marker za nepostojeci cvor
+		cvorovi[i] = "";			// prazan string = marker za nepostojeci cvor
 		for (int j = 0; j < dim; j++) {
-			grane[i][j] = 0;	// 0 = marker za nepostojecu granu
+			grane[i][j] = INT_MAX;	// INT_MAX = marker za nepostojecu granu
 		}
 	}
 }
@@ -81,7 +81,10 @@ void Graf::ispisi_reprezentaciju() {
 	for (int i = 0; i < n; i++) {
 		cout << setw(3) << (cvorovi[i] == "" ? "/" : cvorovi[i]);
 		for (int j = 0; j < n; j++) {
-			cout << setw(3) << grane[i][j];
+			if(grane[i][j] < INT_MAX)
+				cout << setw(3) << grane[i][j];
+			else
+				cout << setw(3) << "-";
 		}
 		cout << endl;
 	}
@@ -256,13 +259,16 @@ int main()
 		cout << "\t5. Obrisi granu izmedju dva cvora" << endl;
 		cout << "\t6. Ispisi reprezentaciju grafa" << endl;
 		cout << "\t7. Obrisi graf" << endl;
-		cout << "\t8. Izadji iz programa (EXIT)" << endl;
+		cout << "\t0. Izadji iz programa (EXIT)" << endl;
 		cout << "Unesite zeljeni broj i pritisnite ENTER... ";
 
 		int opcija;
 		cin >> opcija;
 
 		switch(opcija){
+			case 0:
+				exit_flag = true;
+				break;
 			case 1:
 				exit_flag = kreiraj_graf(&graf);
 				break;
@@ -283,9 +289,6 @@ int main()
 				break;
 			case 7:
 				exit_flag = obrisi_graf(&graf);
-				break;
-			case 8:
-				exit_flag = true;
 				break;
 			default:
 				cout << "Nepravilan izbor opcije.";
