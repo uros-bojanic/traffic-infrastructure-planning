@@ -23,6 +23,8 @@ public:
 	void obrisi_granu(string cvor1, string cvor2);
 	void ispisi_reprezentaciju();
 	int primov_algoritam();
+	int dohvati_min_index(vector<int> dist, vector<bool> poseceno);
+	void dajkstrin_algoritam();
 };
 
 Graf::Graf(int dim) {
@@ -117,6 +119,36 @@ int Graf::primov_algoritam() {
 		}
 	}
 	return cena_puta;
+}
+
+int Graf::dohvati_min_index(vector<int> dist, vector<bool> poseceno){
+	int min = INT_MAX, min_index;
+	for (int i = 0; i < n; i++) {
+		if (dist[i] <= min && poseceno[i] == 0) {
+			min = dist[i];
+			min_index = i;
+		}
+	}
+	return min_index;
+}
+
+void Graf::dajkstrin_algoritam() {
+	vector<int> dist(n, INT_MAX);
+	vector<bool> poseceno(n, 0);
+	dist[0] = 0;
+	for (int grana = 1; grana < n; grana++) {
+		int j = dohvati_min_index(dist, poseceno);
+		poseceno[j] = true;
+		for (int i = 0; i < n; i++) {
+			if (!poseceno[i] && grane[j][i] < INT_MAX && dist[j] != INT_MAX && dist[j] + grane[j][i] < dist[i]) {
+				dist[i] = dist[j] + grane[j][i]; 
+			}
+		}
+	}
+	cout << "cvor\trastojanje" << endl;
+	for (int i = 0; i < n; i++) {
+		cout << i << "\t" << dist[i] << endl;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -281,6 +313,17 @@ bool primov_algoritam(Graf* graf) {
 	return 0;
 }
 
+bool dajkstrin_algoritam(Graf* graf) {
+	if (graf == nullptr) {
+		cout << "Graf ne postoji!";
+		return 1;
+	}
+
+	cout << "Dajkstrin algoritam..." << endl;
+	graf->dajkstrin_algoritam();
+	return 0;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// Glavni program
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -301,6 +344,7 @@ int main()
 		cout << "\t6. Ispisi reprezentaciju grafa" << endl;
 		cout << "\t7. Obrisi graf" << endl;
 		cout << "\t8. Primov algoritam" << endl;
+		cout << "\t9. Dajkstrin algoritam" << endl;
 		cout << "\t0. Izadji iz programa (EXIT)" << endl;
 		cout << "Unesite zeljeni broj i pritisnite ENTER... ";
 
@@ -334,6 +378,9 @@ int main()
 				break;
 			case 8:
 				exit_flag = primov_algoritam(graf);
+				break;
+			case 9:
+				exit_flag = dajkstrin_algoritam(graf);
 				break;
 			default:
 				cout << "Nepravilan izbor opcije.";
