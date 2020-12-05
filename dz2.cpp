@@ -24,6 +24,7 @@ public:
 	void ispisi_reprezentaciju();
 	int primov_algoritam();
 	int dohvati_min_index(vector<int> dist, vector<bool> poseceno);
+	void stampaj_put(vector<int> prethodnik, int i);
 	void dajkstrin_algoritam();
 };
 
@@ -121,7 +122,7 @@ int Graf::primov_algoritam() {
 	return cena_puta;
 }
 
-int Graf::dohvati_min_index(vector<int> dist, vector<bool> poseceno){
+int Graf::dohvati_min_index(vector<int> dist, vector<bool> poseceno) {
 	int min = INT_MAX, min_index;
 	for (int i = 0; i < n; i++) {
 		if (dist[i] <= min && poseceno[i] == 0) {
@@ -132,22 +133,32 @@ int Graf::dohvati_min_index(vector<int> dist, vector<bool> poseceno){
 	return min_index;
 }
 
+void Graf::stampaj_put(vector<int> prethodnik, int i) {
+	if(prethodnik[i] == -1) return;
+	stampaj_put(prethodnik, prethodnik[i]);
+	cout << "-" << i;
+}
+
 void Graf::dajkstrin_algoritam() {
 	vector<int> dist(n, INT_MAX);
 	vector<bool> poseceno(n, 0);
+	vector<int> prethodnik(n, -1);
 	dist[0] = 0;
 	for (int grana = 1; grana < n; grana++) {
 		int j = dohvati_min_index(dist, poseceno);
 		poseceno[j] = true;
 		for (int i = 0; i < n; i++) {
 			if (!poseceno[i] && grane[j][i] < INT_MAX && dist[j] != INT_MAX && dist[j] + grane[j][i] < dist[i]) {
+				prethodnik[i] = j;
 				dist[i] = dist[j] + grane[j][i]; 
 			}
 		}
 	}
-	cout << "cvor\trastojanje" << endl;
+	cout << "cvor\trastojanje\tput" << endl;
 	for (int i = 0; i < n; i++) {
-		cout << i << "\t" << dist[i] << endl;
+		cout << i << "\t" << dist[i] << "\t\t0";
+		stampaj_put(prethodnik, i);
+		cout << endl;
 	}
 }
 
