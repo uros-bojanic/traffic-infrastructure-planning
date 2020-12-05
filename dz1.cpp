@@ -69,7 +69,7 @@ void Graf::dodaj_granu(string cvor1, string cvor2, int tezina) {
 }
 
 void Graf::obrisi_granu(string cvor1, string cvor2) {
-	dodaj_granu(cvor1, cvor2, 0);
+	dodaj_granu(cvor1, cvor2, INT_MAX);
 }
 
 void Graf::ispisi_reprezentaciju() {
