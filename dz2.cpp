@@ -446,6 +446,8 @@ bool obrisi_graf(Graf** graf) {
 	return 0;
 }
 
+// DODATAK: Zadatak 2. (1)
+
 bool primov_algoritam(Graf* graf) {
 	if (graf == nullptr) {
 		cout << "Graf ne postoji!";
@@ -463,6 +465,8 @@ bool primov_algoritam(Graf* graf) {
 	cout << "Ukupna cena izgradnje metroa: " << cena_puta << "." << endl;
 	return 0;
 }
+
+// DODATAK: Zadatak 2. (2)
 
 bool dajkstrin_algoritam(Graf* graf) {
 	if (graf == nullptr) {
