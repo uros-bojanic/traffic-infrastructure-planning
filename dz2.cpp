@@ -12,6 +12,9 @@ private:
 	int n;
 	vector<string> cvorovi;
 	vector<vector<int>> grane;
+	// DODATAK: Zadatak 2. (2)
+	struct put_za_vatrogasna_kola;
+	struct Node_putevi;
 public:
 	Graf(int dim);
 	~Graf() {}	/*	Kako smo za potrebe dinamickog niza koristili vector iz STL,
@@ -22,9 +25,12 @@ public:
 	void dodaj_granu(string cvor1, string cvor2, int tezina);
 	void obrisi_granu(string cvor1, string cvor2);
 	void ispisi_reprezentaciju();
+	// DODATAK: Zadatak 2. (1)
 	int primov_algoritam();
+	// DODATAK: Zadatak 2. (2)
 	int dohvati_min_index(vector<int> dist, vector<bool> poseceno);
 	void stampaj_put(vector<int> prethodnik, int i);
+	void rekurzija(Node_putevi** putevi, int cvor2, put_za_vatrogasna_kola* put);
 	void dajkstrin_algoritam();
 };
 
@@ -94,6 +100,8 @@ void Graf::ispisi_reprezentaciju() {
 	}
 }
 
+// DODATAK: Zadatak 2. (1)
+
 int Graf::primov_algoritam() {
 	unordered_set<int> poseceno;
 	poseceno.insert(0);
@@ -122,6 +130,19 @@ int Graf::primov_algoritam() {
 	return cena_puta;
 }
 
+// DODATAK: Zadatak 2. (2)
+
+struct Graf::put_za_vatrogasna_kola{
+	vector<int> red;
+	int cena;
+	int broj_izgradnji;
+};
+
+struct Graf::Node_putevi{
+	put_za_vatrogasna_kola data;
+	Node_putevi* next;
+};
+
 int Graf::dohvati_min_index(vector<int> dist, vector<bool> poseceno) {
 	int min = INT_MAX, min_index;
 	for (int i = 0; i < n; i++) {
@@ -139,6 +160,40 @@ void Graf::stampaj_put(vector<int> prethodnik, int i) {
 	cout << "-" << i;
 }
 
+void Graf::rekurzija(Node_putevi** putevi, int cvor2, put_za_vatrogasna_kola* put) {
+	if(cvor2 == 0) {
+		cout << "Konacno: " << endl;
+		for(int i = 0; i < put->red.size() - 1; i++) {
+			cout << put->red[i] << "-";
+		}
+		cout << put->red[put->red.size() - 1] << endl;
+		cout << "Cena: " << put->cena << "(" << put->broj_izgradnji << ")" << endl << "-------------------" << endl;
+
+		Node_putevi* novi_put = new Node_putevi;
+		novi_put->data = (*put);
+		novi_put->next = (*putevi);
+		(*putevi) = novi_put;
+
+		return;
+	}
+	for(int cvor1 = 0; cvor1 < n; cvor1++) {
+		if(grane[cvor1][cvor2] < INT_MAX) {
+			put_za_vatrogasna_kola put_copy = (*put);
+			put_copy.red.push_back(cvor1);
+			put_copy.cena += abs(grane[cvor1][cvor2]);
+			put_copy.broj_izgradnji += grane[cvor1][cvor2] < 0;
+
+			cout << "{";
+			for(int i = 0; i < put_copy.red.size(); i++) {
+				cout << put_copy.red[i] << "-";
+			}
+			cout << "}" << endl;
+
+			rekurzija(putevi, cvor1, &put_copy);
+		}
+	}
+}
+
 void Graf::dajkstrin_algoritam() {
 	vector<int> dist(n, INT_MAX);
 	vector<bool> poseceno(n, 0);
@@ -154,11 +209,62 @@ void Graf::dajkstrin_algoritam() {
 			}
 		}
 	}
+
 	cout << "cvor\trastojanje\tput" << endl;
 	for (int i = 0; i < n; i++) {
 		cout << i << "\t" << dist[i] << "\t\t0";
 		stampaj_put(prethodnik, i);
 		cout << endl;
+	}
+
+	ispisi_reprezentaciju();
+
+	// Pripisivanje smerova
+	for(int i = 0; i < n; i++) {
+		for(int j = 0; j < n; j++) {
+			if(grane[i][j] != INT_MAX) {
+				if(dist[i] < dist[j]) {
+					grane[j][i] = INT_MAX;
+				}
+				else {
+					grane[i][j] = INT_MAX;
+				}
+			}
+		}
+	}
+
+	ispisi_reprezentaciju();
+
+	// Stampanje puteva
+	for(int cvor2 = 1; cvor2 < n; cvor2++) {
+		Node_putevi* putevi = nullptr;
+		cout << "Putevi za cvor " << cvor2 << ":" << endl;
+		put_za_vatrogasna_kola put;
+		put.red.push_back(cvor2);
+		rekurzija(&putevi, cvor2, &put);
+
+		Node_putevi* tmp = putevi;
+		cout << "*************************" << endl;
+		cout << "JEBENO KONACNO: " << endl;
+		while(tmp != nullptr){
+			cout << tmp->data.cena << "(" << tmp->data.broj_izgradnji << ")" << endl;
+			tmp = tmp->next;
+		}
+		cout << "*************************" << endl;
+
+		cout << endl;
+	}
+
+	// Popravljanje smerova
+	for(int i = 0; i < n; i++) {
+		for(int j = 0; j < n; j++) {
+			if(grane[i][j] == INT_MAX && grane[j][i] != INT_MAX) {
+				grane[i][j] = grane[j][i];
+			}
+			if(grane[i][j] != INT_MAX && grane[j][i] == INT_MAX) {
+				grane[j][i] = grane[i][j];
+			}
+		}
 	}
 }
 
