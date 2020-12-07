@@ -1,10 +1,15 @@
 /* Uros Bojanic
- * 2019/0077
- * i = 1
- * j = 1
+* 2019/0077
+* i = 1
+* j = 1
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <iomanip>
+#include <climits>
+#include <string>
+#include <vector>
+#include <unordered_set>
 using namespace std;
 
 class Graf {
@@ -14,8 +19,8 @@ private:
 	vector<vector<int>> grane;
 public:
 	Graf(int dim);
-	~Graf() {}	/*	Kako smo za potrebe dinamickog niza koristili vector iz STL,
-				 	odgovarajuci destruktor ce biti automatski pozvan.*/
+	~Graf() {}  /*  Kako smo za potrebe dinamickog niza koristili vector iz STL,
+	odgovarajuci destruktor ce biti automatski pozvan.*/
 	void dodaj_cvor(string cvor);
 	int dohvati_indeks_cvora(string cvor);
 	void obrisi_cvor(string cvor);
@@ -29,9 +34,11 @@ Graf::Graf(int dim) {
 	cvorovi.resize(dim);
 	grane.resize(dim, vector<int>(dim, 0));
 	for (int i = 0; i < dim; i++) {
-		cvorovi[i] = "";			// prazan string = marker za nepostojeci cvor
+		// prazan string = marker za nepostojeci cvor
+		cvorovi[i] = "";
 		for (int j = 0; j < dim; j++) {
-			grane[i][j] = INT_MAX;	// INT_MAX = marker za nepostojecu granu
+			// INT_MAX = marker za nepostojecu granu
+			grane[i][j] = INT_MAX;
 		}
 	}
 }
@@ -73,18 +80,18 @@ void Graf::obrisi_granu(string cvor1, string cvor2) {
 }
 
 void Graf::ispisi_reprezentaciju() {
-	cout << setw(3) << " ";
+	cout << setw(4) << " ";
 	for (int i = 0; i < n; i++) {
-		cout << setw(3) << (cvorovi[i] == "" ? "/" : cvorovi[i]);
+		cout << setw(4) << (cvorovi[i] == "" ? "/" : cvorovi[i]);
 	}
 	cout << endl;
 	for (int i = 0; i < n; i++) {
-		cout << setw(3) << (cvorovi[i] == "" ? "/" : cvorovi[i]);
+		cout << setw(4) << (cvorovi[i] == "" ? "/" : cvorovi[i]);
 		for (int j = 0; j < n; j++) {
-			if(grane[i][j] < INT_MAX)
-				cout << setw(3) << grane[i][j];
+			if (grane[i][j] < INT_MAX)
+				cout << setw(4) << grane[i][j];
 			else
-				cout << setw(3) << "-";
+				cout << setw(4) << "-";
 		}
 		cout << endl;
 	}
@@ -94,150 +101,164 @@ void Graf::ispisi_reprezentaciju() {
 /// Funkcije korisnickog interfejsa
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-bool kreiraj_graf(Graf** graf) {
+void kreiraj_graf(Graf** graf) {
 	if (*graf != nullptr) {
-		cout << "Graf vec postoji!";
-		return 1;
+		cout << "Graf vec postoji!" << endl;
+		return;
 	}
 
-	cout << "Kreiranje grafa... Unesite velicinu grafa: ";
+	cout << "Kreiranje grafa..." << endl;
+	cout << "Unesite velicinu grafa: ";
 	int dim;
 	cin >> dim;
 
 	if (dim <= 0) {
-		cout << "Nepravilan unos velicine grafa!";
-		return 1;
+		cout << "Nepravilan unos velicine grafa!" << endl;
+		return;
 	}
 
 	*graf = new Graf{ dim };
 	cout << "Graf uspesno kreiran!" << endl;
-	return 0;
 }
 
-bool dodaj_cvor(Graf* graf) {
+void dodaj_cvor(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
-	cout << "Dodavanje cvora... Unesite naziv cvora: ";
+	cout << "Dodavanje cvora..." << endl;
+	cout << "Unesite naziv cvora: ";
 	string cvor;
 	cin >> cvor;
 
-	if (cvor == "") {
-		cout << "Nepravilan unos cvora!";
-		return 1;
+	if (cvor.length() > 3) {
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
 	}
 
-	if(graf->dohvati_indeks_cvora(cvor) != -1) {
-		cout << "Vec postoji taj cvor!";
-		return 1;
+	if (graf->dohvati_indeks_cvora(cvor) != -1) {
+		cout << "Vec postoji taj cvor!" << endl;
+		return;
 	}
 
 	graf->dodaj_cvor(cvor);
 
-	if(graf->dohvati_indeks_cvora(cvor) == -1) {
-		cout << "Nema vise slobodnih cvorova u grafu!";
-		return 1;
+	if (graf->dohvati_indeks_cvora(cvor) == -1) {
+		cout << "Nema vise slobodnih cvorova u grafu!" << endl;
+		return;
 	}
 
 	cout << "Cvor: " << cvor << " uspesno dodat!" << endl;
-	return 0;
 }
 
-bool obrisi_cvor(Graf* graf) {
+void obrisi_cvor(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
-	cout << "Brisanje cvora... Unesite naziv cvora: ";
+	cout << "Brisanje cvora..." << endl;
+	cout << "Unesite naziv cvora: ";
 	string cvor;
 	cin >> cvor;
 
 	if (graf->dohvati_indeks_cvora(cvor) == -1) {
-		cout << "Nepravilan unos cvora!";
-		return 1;
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
 	}
 
 	graf->obrisi_cvor(cvor);
 	cout << "Cvor: " << cvor << " uspesno obrisan!" << endl;
-	return 0;
 }
 
-bool dodaj_granu(Graf* graf) {
+void dodaj_granu(Graf* graf, bool samo_pozitivne_tezine) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
-	cout << "Dodavanje grane... Unesite prvi cvor: ";
+	cout << "Dodavanje grane..." << endl << "Unesite prvi cvor: ";
 	string cvor1, cvor2;
 	cin >> cvor1;
 	cout << "Unesite drugi cvor: ";
 	cin >> cvor2;
+
+	if (graf->dohvati_indeks_cvora(cvor1) == -1 || graf->dohvati_indeks_cvora(cvor2) == -1) {
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
+	}
+
 	int tezina;
 	cout << "Unesite tezinu: ";
 	cin >> tezina;
 
-	if (graf->dohvati_indeks_cvora(cvor1) == -1 || graf->dohvati_indeks_cvora(cvor2) == -1) {
-		cout << "Nepravilan unos cvora!";
-		return 1;
-	}
 	if (tezina < 0) {
-		cout << "Nepravilan unos tezine!";
-		return 1;
+		cout << "Nepravilan unos tezine!" << endl;
+		return;
+	}
+
+	if (!samo_pozitivne_tezine) {
+		cout << "Da li je put izgradjen(1) ili izgradljiv(0)? Uneti 1 ili 0: ";
+		int izgradjen;
+		cin >> izgradjen;
+		if (izgradjen == 0) {
+			tezina *= -1;
+		}
 	}
 
 	graf->dodaj_granu(cvor1, cvor2, tezina);
 	cout << "Cvorovi: " << cvor1 << " i " << cvor2 << " uspesno povezani! (" << tezina << ")" << endl;
-	return 0;
 }
 
-bool obrisi_granu(Graf* graf) {
+void obrisi_granu(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
-	cout << "Brisanje grane... Unesite prvi cvor: ";
+	cout << "Brisanje grane..." << endl;
+	cout << "Unesite prvi cvor: ";
 	string cvor1, cvor2;
 	cin >> cvor1;
+
+	if (graf->dohvati_indeks_cvora(cvor1) == -1) {
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
+	}
+
 	cout << "Unesite drugi cvor: ";
 	cin >> cvor2;
 
-	if (graf->dohvati_indeks_cvora(cvor1) == -1 || graf->dohvati_indeks_cvora(cvor2) == -1) {
-		cout << "Nepravilan unos cvora!";
-		return 1;
+	if (graf->dohvati_indeks_cvora(cvor2) == -1) {
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
 	}
 
 	graf->obrisi_granu(cvor1, cvor2);
 	cout << "Cvorovi: " << cvor1 << " i " << cvor2 << " uspesno odvezani!" << endl;
-	return 0;
 }
 
-bool ispisi_reprezentaciju(Graf* graf) {
+void ispisi_reprezentaciju(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	cout << "Ispisivanje reprezentacije grafa..." << endl;
 	graf->ispisi_reprezentaciju();
-	return 0;
 }
 
-bool obrisi_graf(Graf** graf) {
+void obrisi_graf(Graf** graf) {
 	if (*graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	cout << "Brisanje grafa..." << endl;
-	delete *graf;
+	delete* graf;
 	*graf = nullptr;
 	cout << "Graf uspesno obrisan!" << endl;
-	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -265,34 +286,33 @@ int main()
 		int opcija;
 		cin >> opcija;
 
-		switch(opcija){
-			case 0:
-				exit_flag = true;
-				break;
-			case 1:
-				exit_flag = kreiraj_graf(&graf);
-				break;
-			case 2:
-				exit_flag = dodaj_cvor(graf);
-				break;
-			case 3:
-				exit_flag = obrisi_cvor(graf);
-				break;
-			case 4:
-				exit_flag = dodaj_granu(graf);
-				break;
-			case 5:
-				exit_flag = obrisi_granu(graf);
-				break;
-			case 6:
-				exit_flag = ispisi_reprezentaciju(graf);
-				break;
-			case 7:
-				exit_flag = obrisi_graf(&graf);
-				break;
-			default:
-				cout << "Nepravilan izbor opcije.";
-				exit_flag = true;
+		switch (opcija) {
+		case 0:
+			exit_flag = true;
+			break;
+		case 1:
+			kreiraj_graf(&graf);
+			break;
+		case 2:
+			dodaj_cvor(graf);
+			break;
+		case 3:
+			obrisi_cvor(graf);
+			break;
+		case 4:
+			dodaj_granu(graf, 1);
+			break;
+		case 5:
+			obrisi_granu(graf);
+			break;
+		case 6:
+			ispisi_reprezentaciju(graf);
+			break;
+		case 7:
+			obrisi_graf(&graf);
+			break;
+		default:
+			cout << "Nepravilan izbor opcije." << endl;
 		}
 	}
 
