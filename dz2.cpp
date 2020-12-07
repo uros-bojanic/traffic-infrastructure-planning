@@ -36,7 +36,7 @@ public:
 	// DODATAK: Zadatak 2. (2)
 	int dohvati_indeks_cvora_sa_min_rastojanjem(vector<int> rastojanje, vector<bool> poseceno);
 	void rekurzija(Node_putevi** putevi, int cvor2, int rastojanje, const put_za_vatrogasna_kola put);
-	int dajkstrin_algoritam();
+	void dajkstrin_algoritam();
 };
 
 Graf::Graf(int dim) {
@@ -44,9 +44,11 @@ Graf::Graf(int dim) {
 	cvorovi.resize(dim);
 	grane.resize(dim, vector<int>(dim, 0));
 	for (int i = 0; i < dim; i++) {
-		cvorovi[i] = "";			// prazan string = marker za nepostojeci cvor
+		// prazan string = marker za nepostojeci cvor
+		cvorovi[i] = "";
 		for (int j = 0; j < dim; j++) {
-			grane[i][j] = INT_MAX;	// INT_MAX = marker za nepostojecu granu
+			// INT_MAX = marker za nepostojecu granu
+			grane[i][j] = INT_MAX;
 		}
 	}
 }
@@ -107,7 +109,7 @@ void Graf::ispisi_reprezentaciju() {
 
 // DODATAK: Zadatak 2. (1)
 
-bool  Graf::proveri_postojanje_cvorova() {
+bool Graf::proveri_postojanje_cvorova() {
 	for (int i = 0; i < n; i++) {
 		if (cvorovi[i] == "") {
 			return 0;
@@ -117,16 +119,10 @@ bool  Graf::proveri_postojanje_cvorova() {
 }
 
 int Graf::primov_algoritam() {
-	if (!proveri_postojanje_cvorova()) {
-		return -1;
-	}
-
 	unordered_set<int> poseceno;
-
 	// Nasumicno biramo pocetak
 	int pocetni_cvor = rand() % n;
 	poseceno.insert(pocetni_cvor);
-	
 	// Primov algoritam za nalazenje minimalnog obuhvatnog stabla
 	int grana = 1, cena = 0;
 	while (grana < n) {
@@ -142,7 +138,6 @@ int Graf::primov_algoritam() {
 				}
 			}
 		}
-
 		// Stampanje resenja
 		if (cvor1 != -1 && cvor2 != -1) {
 			cout << "Metro linija " << grana << ": " << cvor1 << "-" << cvor2 << " (" << min << ")" << endl;
@@ -214,9 +209,16 @@ void Graf::rekurzija(Node_putevi** putevi, int cvor2, int rastojanje, const put_
 	}
 }
 
-int Graf::dajkstrin_algoritam() {
-	if (!proveri_postojanje_cvorova()) {
-		return -1;
+void Graf::dajkstrin_algoritam() {
+	bool ima_V = false;
+	for (int i = 0; i < n; i++) {
+		if(cvorovi[i] == "V") {
+			ima_V = true;
+		}
+	}
+	if(!ima_V) {
+		cout << "Graf ne sadrzi cvor V (vatrogasnu stanicu)!" << endl;
+		return;
 	}
 	// Inicijalizacija potrebnih markera
 	vector<int> rastojanje(n, INT_MAX);
@@ -282,7 +284,6 @@ int Graf::dajkstrin_algoritam() {
 			}
 		}
 	}
-	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -406,7 +407,8 @@ bool obrisi_granu(Graf* graf) {
 		return 1;
 	}
 
-	cout << "Brisanje grane... Unesite prvi cvor: ";
+	cout << "Brisanje grane..." << endl;
+    cout << "Unesite prvi cvor: ";
 	string cvor1, cvor2;
 	cin >> cvor1;
 	cout << "Unesite drugi cvor: ";
@@ -454,15 +456,14 @@ bool primov_algoritam(Graf* graf) {
 		return 1;
 	}
 
-	cout << "Primov algoritam..." << endl;
-	int cena_puta = graf->primov_algoritam();
-
-	if (cena_puta == -1) {
+	if (!graf->proveri_postojanje_cvorova()) {
 		cout << "Cvorovi nisu inicijalizovani!";
 		return 1;
 	}
 
-	cout << "Ukupna cena izgradnje metroa: " << cena_puta << "." << endl;
+	cout << "Primov algoritam..." << endl;
+	int cena_metroa = graf->primov_algoritam();
+	cout << "Ukupna cena izgradnje metroa: " << cena_metroa << "." << endl;
 	return 0;
 }
 
@@ -474,12 +475,13 @@ bool dajkstrin_algoritam(Graf* graf) {
 		return 1;
 	}
 
-	cout << "Dajkstrin algoritam..." << endl;
-	int rezultat = graf->dajkstrin_algoritam();
-	if (rezultat == -1) {
+	if (!graf->proveri_postojanje_cvorova()) {
 		cout << "Cvorovi nisu inicijalizovani!";
 		return 1;
 	}
+
+	cout << "Dajkstrin algoritam..." << endl;
+	graf->dajkstrin_algoritam();
 	return 0;
 }
 
