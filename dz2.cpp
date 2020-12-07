@@ -1,7 +1,7 @@
 /* Uros Bojanic
- * 2019/0077
- * i = 1
- * j = 1
+* 2019/0077
+* i = 1
+* j = 1
 */
 
 #include <iostream>
@@ -22,7 +22,7 @@ private:
 	struct Node_putevi;
 public:
 	Graf(int dim);
-	~Graf() {}	/*	Kako smo za potrebe dinamickog niza koristili vector iz STL,
+	~Graf() {}  /*  Kako smo za potrebe dinamickog niza koristili vector iz STL,
 					odgovarajuci destruktor ce biti automatski pozvan.*/
 	void dodaj_cvor(string cvor);
 	int dohvati_indeks_cvora(string cvor);
@@ -290,81 +290,81 @@ void Graf::dajkstrin_algoritam() {
 /// Funkcije korisnickog interfejsa
 ///////////////////////////////////////////////////////////////////////////////////////////
 
-bool kreiraj_graf(Graf** graf) {
+void kreiraj_graf(Graf** graf) {
 	if (*graf != nullptr) {
-		cout << "Graf vec postoji!";
-		return 1;
+		cout << "Graf vec postoji!" << endl;
+		return;
 	}
 
-	cout << "Kreiranje grafa... Unesite velicinu grafa: ";
+	cout << "Kreiranje grafa..." << endl;
+	cout << "Unesite velicinu grafa: ";
 	int dim;
 	cin >> dim;
 
 	if (dim <= 0) {
-		cout << "Nepravilan unos velicine grafa!";
-		return 1;
+		cout << "Nepravilan unos velicine grafa!" << endl;
+		return;
 	}
 
 	*graf = new Graf{ dim };
 	cout << "Graf uspesno kreiran!" << endl;
-	return 0;
 }
 
-bool dodaj_cvor(Graf* graf) {
+void dodaj_cvor(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
-	cout << "Dodavanje cvora... Unesite naziv cvora: ";
+	cout << "Dodavanje cvora..." << endl;
+	cout << "Unesite naziv cvora: ";
 	string cvor;
 	cin >> cvor;
 
-	if (cvor == "") {
-		cout << "Nepravilan unos cvora!";
-		return 1;
+	if (cvor.length() > 3) {
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
 	}
 
 	if (graf->dohvati_indeks_cvora(cvor) != -1) {
-		cout << "Vec postoji taj cvor!";
-		return 1;
+		cout << "Vec postoji taj cvor!" << endl;
+		return;
 	}
 
 	graf->dodaj_cvor(cvor);
 
 	if (graf->dohvati_indeks_cvora(cvor) == -1) {
-		cout << "Nema vise slobodnih cvorova u grafu!";
-		return 1;
+		cout << "Nema vise slobodnih cvorova u grafu!" << endl;
+		return;
 	}
 
 	cout << "Cvor: " << cvor << " uspesno dodat!" << endl;
-	return 0;
 }
 
-bool obrisi_cvor(Graf* graf) {
+void obrisi_cvor(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
-	cout << "Brisanje cvora... Unesite naziv cvora: ";
+	cout << "Brisanje cvora..." << endl;
+	cout << "Unesite naziv cvora: ";
 	string cvor;
 	cin >> cvor;
 
 	if (graf->dohvati_indeks_cvora(cvor) == -1) {
-		cout << "Nepravilan unos cvora!";
-		return 1;
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
 	}
 
 	graf->obrisi_cvor(cvor);
 	cout << "Cvor: " << cvor << " uspesno obrisan!" << endl;
-	return 0;
 }
 
-bool dodaj_granu(Graf* graf, bool samo_pozitivne_tezine) {
+void dodaj_granu(Graf* graf, bool samo_pozitivne_tezine) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	cout << "Dodavanje grane..." << endl << "Unesite prvi cvor: ";
@@ -374,8 +374,8 @@ bool dodaj_granu(Graf* graf, bool samo_pozitivne_tezine) {
 	cin >> cvor2;
 
 	if (graf->dohvati_indeks_cvora(cvor1) == -1 || graf->dohvati_indeks_cvora(cvor2) == -1) {
-		cout << "Nepravilan unos cvora!";
-		return 1;
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
 	}
 
 	int tezina;
@@ -383,8 +383,8 @@ bool dodaj_granu(Graf* graf, bool samo_pozitivne_tezine) {
 	cin >> tezina;
 
 	if (tezina < 0) {
-		cout << "Nepravilan unos tezine!";
-		return 1;
+		cout << "Nepravilan unos tezine!" << endl;
+		return;
 	}
 
 	if (!samo_pozitivne_tezine) {
@@ -398,91 +398,91 @@ bool dodaj_granu(Graf* graf, bool samo_pozitivne_tezine) {
 
 	graf->dodaj_granu(cvor1, cvor2, tezina);
 	cout << "Cvorovi: " << cvor1 << " i " << cvor2 << " uspesno povezani! (" << tezina << ")" << endl;
-	return 0;
 }
 
-bool obrisi_granu(Graf* graf) {
+void obrisi_granu(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	cout << "Brisanje grane..." << endl;
-    cout << "Unesite prvi cvor: ";
+	cout << "Unesite prvi cvor: ";
 	string cvor1, cvor2;
 	cin >> cvor1;
+
+	if (graf->dohvati_indeks_cvora(cvor1) == -1) {
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
+	}
+
 	cout << "Unesite drugi cvor: ";
 	cin >> cvor2;
 
-	if (graf->dohvati_indeks_cvora(cvor1) == -1 || graf->dohvati_indeks_cvora(cvor2) == -1) {
-		cout << "Nepravilan unos cvora!";
-		return 1;
+	if (graf->dohvati_indeks_cvora(cvor2) == -1) {
+		cout << "Nepravilan unos cvora!" << endl;
+		return;
 	}
 
 	graf->obrisi_granu(cvor1, cvor2);
 	cout << "Cvorovi: " << cvor1 << " i " << cvor2 << " uspesno odvezani!" << endl;
-	return 0;
 }
 
-bool ispisi_reprezentaciju(Graf* graf) {
+void ispisi_reprezentaciju(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	cout << "Ispisivanje reprezentacije grafa..." << endl;
 	graf->ispisi_reprezentaciju();
-	return 0;
 }
 
-bool obrisi_graf(Graf** graf) {
+void obrisi_graf(Graf** graf) {
 	if (*graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	cout << "Brisanje grafa..." << endl;
 	delete* graf;
 	*graf = nullptr;
 	cout << "Graf uspesno obrisan!" << endl;
-	return 0;
 }
 
 // DODATAK: Zadatak 2. (1)
 
-bool primov_algoritam(Graf* graf) {
+void primov_algoritam(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	if (!graf->proveri_postojanje_cvorova()) {
-		cout << "Cvorovi nisu inicijalizovani!";
-		return 1;
+		cout << "Cvorovi nisu inicijalizovani!" << endl;
+		return;
 	}
 
 	cout << "Primov algoritam..." << endl;
 	int cena_metroa = graf->primov_algoritam();
 	cout << "Ukupna cena izgradnje metroa: " << cena_metroa << "." << endl;
-	return 0;
 }
 
 // DODATAK: Zadatak 2. (2)
 
-bool dajkstrin_algoritam(Graf* graf) {
+void dajkstrin_algoritam(Graf* graf) {
 	if (graf == nullptr) {
-		cout << "Graf ne postoji!";
-		return 1;
+		cout << "Graf ne postoji!" << endl;
+		return;
 	}
 
 	if (!graf->proveri_postojanje_cvorova()) {
-		cout << "Cvorovi nisu inicijalizovani!";
-		return 1;
+		cout << "Cvorovi nisu inicijalizovani!" << endl;
+		return;
 	}
 
 	cout << "Dajkstrin algoritam..." << endl;
 	graf->dajkstrin_algoritam();
-	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -504,7 +504,7 @@ void mod1_metro() {
 		cout << "\t6. Ispisi reprezentaciju grada (grafa)" << endl;
 		cout << "\t7. Obrisi grad (graf)" << endl;
 		cout << "\t8. Izracunaj cenu izgradnje metroa (Primov algoritam)" << endl;
-		cout << "\t0. Izadji iz programa (EXIT)" << endl;
+		cout << "\t0. Povratak u glavni meni (BACK)" << endl;
 		cout << "Unesite zeljeni broj i pritisnite ENTER... ";
 
 		int opcija;
@@ -515,32 +515,31 @@ void mod1_metro() {
 			exit_flag = true;
 			break;
 		case 1:
-			exit_flag = kreiraj_graf(&graf);
+			kreiraj_graf(&graf);
 			break;
 		case 2:
-			exit_flag = dodaj_cvor(graf);
+			dodaj_cvor(graf);
 			break;
 		case 3:
-			exit_flag = obrisi_cvor(graf);
+			obrisi_cvor(graf);
 			break;
 		case 4:
-			exit_flag = dodaj_granu(graf, 1);
+			dodaj_granu(graf, 1);
 			break;
 		case 5:
-			exit_flag = obrisi_granu(graf);
+			obrisi_granu(graf);
 			break;
 		case 6:
-			exit_flag = ispisi_reprezentaciju(graf);
+			ispisi_reprezentaciju(graf);
 			break;
 		case 7:
-			exit_flag = obrisi_graf(&graf);
+			obrisi_graf(&graf);
 			break;
 		case 8:
-			exit_flag = primov_algoritam(graf);
+			primov_algoritam(graf);
 			break;
 		default:
-			cout << "Nepravilan izbor opcije.";
-			exit_flag = true;
+			cout << "Nepravilan izbor opcije." << endl;
 		}
 	}
 
@@ -563,7 +562,7 @@ void mod2_vatrogasci() {
 		cout << "\t6. Ispisi reprezentaciju grada (grafa)" << endl;
 		cout << "\t7. Obrisi grad (graf)" << endl;
 		cout << "\t8. Izracunaj najkrace putanje od vatrogasne stanice do svih lokacija" << endl;
-		cout << "\t0. Izadji iz programa (EXIT)" << endl;
+		cout << "\t0. Povratak u glavni meni (BACK)" << endl;
 		cout << "Unesite zeljeni broj i pritisnite ENTER... ";
 
 		int opcija;
@@ -574,32 +573,31 @@ void mod2_vatrogasci() {
 			exit_flag = true;
 			break;
 		case 1:
-			exit_flag = kreiraj_graf(&graf);
+			kreiraj_graf(&graf);
 			break;
 		case 2:
-			exit_flag = dodaj_cvor(graf);
+			dodaj_cvor(graf);
 			break;
 		case 3:
-			exit_flag = obrisi_cvor(graf);
+			obrisi_cvor(graf);
 			break;
 		case 4:
-			exit_flag = dodaj_granu(graf, 0);
+			dodaj_granu(graf, 0);
 			break;
 		case 5:
-			exit_flag = obrisi_granu(graf);
+			obrisi_granu(graf);
 			break;
 		case 6:
-			exit_flag = ispisi_reprezentaciju(graf);
+			ispisi_reprezentaciju(graf);
 			break;
 		case 7:
-			exit_flag = obrisi_graf(&graf);
+			obrisi_graf(&graf);
 			break;
 		case 8:
-			exit_flag = dajkstrin_algoritam(graf);
+			dajkstrin_algoritam(graf);
 			break;
 		default:
-			cout << "Nepravilan izbor opcije.";
-			exit_flag = true;
+			cout << "Nepravilan izbor opcije." << endl;
 		}
 	}
 
@@ -613,29 +611,29 @@ void mod2_vatrogasci() {
 
 int main()
 {
-	cout << "--------------------------------------------" << endl;
-	cout << "Izaberite mod rada programa:" << endl;
-	cout << "\t1. Stvaranje i ispis metroa" << endl;
-	cout << "\t2. Pronalazenje najkrace putanje za vatrogasna kola" << endl;
-	cout << "\t0. Izadji iz programa (EXIT)" << endl;
-	cout << "Unesite zeljeni broj i pritisnite ENTER... ";
-
-	int opcija;
-	cin >> opcija;
-
-	switch (opcija) {
-	case 0:
-		break;
-	case 1:
-		mod1_metro();
-		break;
-	case 2:
-		mod2_vatrogasci();
-		break;
-	default:
-		cout << "Nepravilan izbor opcije." << endl;
+	int opcija = 1;
+	while(opcija != 0) {
+		cout << "--------------------------------------------" << endl;
+		cout << "Izaberite mod rada programa:" << endl;
+		cout << "\t1. Stvaranje i ispis metroa" << endl;
+		cout << "\t2. Pronalazenje najkrace putanje za vatrogasna kola" << endl;
+		cout << "\t0. Izadji iz programa (EXIT)" << endl;
+		cout << "Unesite zeljeni broj i pritisnite ENTER... ";
+		cin >> opcija;
+		switch (opcija) {
+		case 0:
+			break;
+		case 1:
+			mod1_metro();
+			break;
+		case 2:
+			mod2_vatrogasci();
+			break;
+		default:
+			cout << "Nepravilan izbor opcije." << endl;
+		}
 	}
 	
-	cout << endl << "Program zavrsen.";
+	cout << "Program zavrsen.";
 	return 0;
 }
