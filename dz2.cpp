@@ -20,6 +20,8 @@ using namespace std;
 // Cvorovi su predstavljeni kao string, a tezine grana kao int
 constexpr auto PRAZAN_CVOR = "";
 constexpr int PRAZNA_GRANA = INT_MAX;
+// DODATAK: Zadatak 2. (2)
+typedef priority_queue<pair<int, deque<int>>,vector<pair<int,deque<int>>>,greater<pair<int,deque<int>>>>& Putevi;
 
 class Graf {
 private:
@@ -39,9 +41,10 @@ public:
     void ispisi_reprezentaciju();
     // DODATAK: Zadatak 2. (1)
     bool proveri_postojanje_cvorova();
+    bool proveri_povezanost();
     int primov_algoritam();
     // DODATAK: Zadatak 2. (2)
-    void dajkstrin_algoritam_stampaj(priority_queue<pair<int, deque<int>>, vector<pair<int, deque<int>>>, greater<pair<int, deque<int>>>>& putevi, deque<int>put, int pocetni_cvor, vector<deque<int>> prethodnik, int rastojanje);
+    void dajkstrin_algoritam_stampaj(Putevi putevi, deque<int>put, int pocetni_cvor, vector<deque<int>> prethodnik, int rastojanje);
     void dajkstrin_algoritam();
 };
 
@@ -64,10 +67,10 @@ void Graf::dodaj_cvor(string cvor) {
     for (int i = 0; i < n; i++) {
         if (cvorovi[i] == PRAZAN_CVOR) {
             cvorovi[i] = cvor;
+            grane[dohvati_indeks_cvora(cvor)][dohvati_indeks_cvora(cvor)] = 0;
             break;
         }
     }
-    grane[dohvati_indeks_cvora(cvor)][dohvati_indeks_cvora(cvor)] = 0;
 }
 
 int Graf::dohvati_indeks_cvora(string cvor) {
@@ -116,6 +119,17 @@ void Graf::ispisi_reprezentaciju() {
         }
         cout << endl;
     }
+    cout << endl;
+    for (int i = 0; i < n; i++) {
+        if (cvorovi[i] != "") {
+            cout << "Cvor " << cvorovi[i] << " je povezan sa cvorovima: ";
+            for (int j = 0; j < n; j++) {
+                if (grane[i][j] < PRAZNA_GRANA && i != j)
+                    cout << cvorovi[j] << "(" << abs(grane[i][j]) << ") ";
+            }
+            cout << endl;
+        }
+    }
 }
 
 // DODATAK: Zadatak 2. (1)
@@ -126,6 +140,28 @@ bool Graf::proveri_postojanje_cvorova() {
         }
     }
     return 1;
+}
+
+bool Graf::proveri_povezanost() {
+    int pocetni_cvor = 0;
+    unordered_set<int> poseceno;
+    poseceno.insert(pocetni_cvor);
+    queue<int> naredni_cvorovi;
+    naredni_cvorovi.push(pocetni_cvor);
+    while(!naredni_cvorovi.empty()) {
+        int cvor2 = naredni_cvorovi.front();
+        naredni_cvorovi.pop();
+        for(int cvor1 = 0; cvor1 < n; cvor1++) {
+            if(grane[cvor1][cvor2] != PRAZNA_GRANA && poseceno.count(cvor1) == 0) {
+                poseceno.insert(cvor1);
+                naredni_cvorovi.push(cvor1);
+            }
+        }
+    }
+    if (poseceno.size() == n) {
+        return 1;
+    }
+    return 0;
 }
 
 int Graf::primov_algoritam() {
@@ -162,6 +198,7 @@ int Graf::primov_algoritam() {
     for (int cvor2 = 0; cvor2 < n; cvor2++) {
         if (cvor2 != pocetni_cvor) {
             int cvor1 = prethodnik[cvor2];
+            cout << "Metro linija " << cvor2 + 1 << ": " << cvorovi[cvor1] << "-" << cvorovi[cvor2] << " (" << grane[cvor1][cvor2] << ")" << endl;
             cena += grane[cvor1][cvor2];
         }
     }
@@ -169,10 +206,9 @@ int Graf::primov_algoritam() {
 }
 
 // DODATAK: Zadatak 2. (2)
-void Graf::dajkstrin_algoritam_stampaj(priority_queue<pair<int, deque<int>>, vector<pair<int, deque<int>>>, greater<pair<int, deque<int>>>>& putevi, deque<int>put, int pocetni_cvor, vector<deque<int>> prethodnik, int rastojanje) {
+void Graf::dajkstrin_algoritam_stampaj(Putevi putevi, deque<int>put, int pocetni_cvor, vector<deque<int>> prethodnik, int rastojanje) {
     int trenutni_cvor = put.back();
     if (trenutni_cvor == pocetni_cvor) {
-        //cout << "\t";
         int rastojanje_ukupno = 0, broj_izgradnji = 0;
         for (int i = put.size() - 1; i > 0; i--) {
             rastojanje_ukupno += abs(grane[put[i]][put[i-1]]);
@@ -181,7 +217,6 @@ void Graf::dajkstrin_algoritam_stampaj(priority_queue<pair<int, deque<int>>, vec
         if (rastojanje_ukupno == rastojanje) {
             putevi.push(make_pair(broj_izgradnji, put));
         }
-        //cout << put[0] << endl << "\tDuzina puta: " << rastojanje_ukupno << " (Potrebnih izgradnji puteva: " << broj_izgradnji << ")" << endl;
     }
     else {
         deque<int>put_novi = put;
@@ -190,7 +225,7 @@ void Graf::dajkstrin_algoritam_stampaj(priority_queue<pair<int, deque<int>>, vec
             put_novi.push_back(prethodnik_novi[trenutni_cvor].front());
             prethodnik_novi[trenutni_cvor].pop_front();
             dajkstrin_algoritam_stampaj(putevi, put_novi, pocetni_cvor, prethodnik_novi, rastojanje);
-             put_novi.pop_back();
+            put_novi.pop_back();
         }
     }
 }
@@ -444,6 +479,11 @@ void primov_algoritam(Graf* graf) {
         return;
     }
 
+    if (!graf->proveri_povezanost()) {
+        cout << "Graf nije povezan! Primov algoritam radi samo na povezanim grafovima." << endl;
+        return;
+    }
+
     cout << "Primov algoritam..." << endl;
     int cena_metroa = graf->primov_algoritam();
     cout << "Ukupna cena izgradnje metroa: " << cena_metroa << "." << endl;
@@ -458,6 +498,11 @@ void dajkstrin_algoritam(Graf* graf) {
 
     if (!graf->proveri_postojanje_cvorova()) {
         cout << "Cvorovi nisu inicijalizovani! Postoje prazni cvorovi u grafu." << endl;
+        return;
+    }
+
+    if (!graf->proveri_povezanost()) {
+        cout << "Graf nije povezan! Dajkstrin algoritam radi samo na povezanim grafovima." << endl;
         return;
     }
 
