@@ -1,0 +1,6 @@
+Rastojanja izmedju cvorova:
+       1   2   3   4
+   1   0   2   5   5
+   2   2   0   3   4
+   3   5   3   0   7
+   4   5   4   7   0

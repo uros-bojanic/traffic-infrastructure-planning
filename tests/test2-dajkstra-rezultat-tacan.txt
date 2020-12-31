@@ -1,0 +1,31 @@
+Dajkstrin algoritam...
+Putevi za cvor 1:
+	V-1
+	Duzina puta: 1 (Potrebnih izgradnji puteva: 0)
+Putevi za cvor 2:
+	V-2
+	Duzina puta: 1 (Potrebnih izgradnji puteva: 0)
+Putevi za cvor 3:
+	V-1-3
+	Duzina puta: 2 (Potrebnih izgradnji puteva: 0)
+	V-2-3
+	Duzina puta: 2 (Potrebnih izgradnji puteva: 0)
+Putevi za cvor 4:
+	V-1-3-4
+	Duzina puta: 3 (Potrebnih izgradnji puteva: 0)
+	V-2-3-4
+	Duzina puta: 3 (Potrebnih izgradnji puteva: 0)
+Putevi za cvor 5:
+	V-1-3-5
+	Duzina puta: 3 (Potrebnih izgradnji puteva: 0)
+	V-2-3-5
+	Duzina puta: 3 (Potrebnih izgradnji puteva: 0)
+Putevi za cvor 6:
+	V-1-3-4-6
+	Duzina puta: 4 (Potrebnih izgradnji puteva: 0)
+	V-2-3-4-6
+	Duzina puta: 4 (Potrebnih izgradnji puteva: 0)
+	V-1-3-5-6
+	Duzina puta: 4 (Potrebnih izgradnji puteva: 0)
+	V-2-3-5-6
+	Duzina puta: 4 (Potrebnih izgradnji puteva: 0)

@@ -1,0 +1,6 @@
+Primov algoritam...
+Metro linija 1: d-a (6)
+Metro linija 2: a-b (2)
+Metro linija 3: b-c (3)
+Metro linija 5: b-e (5)
+Ukupna cena izgradnje metroa: 16.
