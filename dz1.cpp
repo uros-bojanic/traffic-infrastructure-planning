@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include <queue>
+#include <stack>
 //#include <bits/stdc++.h>
 using namespace std;
 
@@ -33,6 +35,11 @@ public:
     void dodaj_granu(string cvor1, string cvor2, int tezina);
     void obrisi_granu(string cvor1, string cvor2);
     void ispisi_reprezentaciju();
+    // DODATAK
+    void kruskalov_algoritam();
+    void flojdov_algoritam();
+    void BFS();
+    void DFS();
 };
 
 Graf::Graf(int dim) {
@@ -54,10 +61,10 @@ void Graf::dodaj_cvor(string cvor) {
     for (int i = 0; i < n; i++) {
         if (cvorovi[i] == PRAZAN_CVOR) {
             cvorovi[i] = cvor;
+            grane[dohvati_indeks_cvora(cvor)][dohvati_indeks_cvora(cvor)] = 0;
             break;
         }
     }
-    grane[dohvati_indeks_cvora(cvor)][dohvati_indeks_cvora(cvor)] = 0;
 }
 
 int Graf::dohvati_indeks_cvora(string cvor) {
@@ -106,6 +113,108 @@ void Graf::ispisi_reprezentaciju() {
         }
         cout << endl;
     }
+    cout << endl;
+    for (int i = 0; i < n; i++) {
+        if (cvorovi[i] != "") {
+            cout << "Cvor " << cvorovi[i] << " je povezan sa cvorovima: ";
+            for (int j = 0; j < n; j++) {
+                if (grane[i][j] < PRAZNA_GRANA && i != j)
+                    cout << cvorovi[j] << "(" << grane[i][j] << ") ";
+            }
+            cout << endl;
+        }
+    }
+}
+
+// DODATAK
+void Graf::kruskalov_algoritam() {
+    vector<int> set_pripadnosti(n);
+    priority_queue<pair<int, pair<int, int>>> grane_sve;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (grane[i][j] != PRAZNA_GRANA && i < j) {
+                grane_sve.push(make_pair(abs(grane[i][j]), make_pair(i, j)));
+            }
+        }
+    }
+    while (!grane_sve.empty()) {
+        cout << grane_sve.top().second.first << "-" << grane_sve.top().second.second << " (" << grane_sve.top().first << ")" << endl;
+        grane_sve.pop();
+    }
+}
+
+void Graf::flojdov_algoritam() {
+    vector<vector<int>> rastojanja = grane;
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (rastojanja[i][j] > rastojanja[i][k] + rastojanja[k][j]) {
+                    rastojanja[i][j] = rastojanja[i][k] + rastojanja[k][j];
+                }
+            }
+        }
+    }
+    cout << "Rastojanja izmedju cvorova:" << endl;
+    cout << setw(4) << " ";
+    for (int i = 0; i < n; i++) {
+        cout << setw(4) << (cvorovi[i] == PRAZAN_CVOR ? "/" : cvorovi[i]);
+    }
+    cout << endl;
+    for (int i = 0; i < n; i++) {
+        cout << setw(4) << (cvorovi[i] == PRAZAN_CVOR ? "/" : cvorovi[i]);
+        for (int j = 0; j < n; j++) {
+            cout << setw(4) << rastojanja[i][j];
+        }
+        cout << endl;
+    }
+}
+
+void Graf::BFS() {
+    // Inicijalizacija
+    vector<bool> poseceno(n, false); 
+    queue<int> q;
+    // Biranje pocetnog cvora
+    int pocetni_cvor = 0;
+    q.push(pocetni_cvor);
+    poseceno[pocetni_cvor] = true;
+    // BFS
+    while (!q.empty()) { 
+        int sledeci_cvor = q.front(); 
+        cout << cvorovi[sledeci_cvor] << " "; 
+        q.pop(); 
+        // Posetiti sve komsije trenutnog cvora (guranje u queue)
+        for (int i = 0; i < n; i++) { 
+            if (grane[sledeci_cvor][i] != PRAZNA_GRANA && (!poseceno[i])) { 
+                q.push(i); 
+                poseceno[i] = true; 
+            } 
+        } 
+    }
+    cout << endl;
+}
+
+void Graf::DFS() {
+    // Inicijalizacija
+    vector<bool> poseceno(n, false); 
+    stack<int> s;
+    // Biranje pocetnog cvora
+    int pocetni_cvor = 0;
+    s.push(pocetni_cvor);
+    poseceno[pocetni_cvor] = true;
+    // DFS
+    while (!s.empty()) { 
+        int sledeci_cvor = s.top(); 
+        cout << cvorovi[sledeci_cvor] << " "; 
+        s.pop(); 
+        // Posetiti sve komsije trenutnog cvora (guranje u stack)
+        for (int i = 0; i < n; i++) { 
+            if (grane[sledeci_cvor][i] != PRAZNA_GRANA && (!poseceno[i])) { 
+                s.push(i); 
+                poseceno[i] = true; 
+            } 
+        } 
+    }
+    cout << endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -293,6 +402,47 @@ void obrisi_graf(Graf** graf) {
     cout << "Graf uspesno obrisan!" << endl;
 }
 
+// DODATAK
+void kruskalov_algoritam(Graf* graf) {
+    if (graf == nullptr) {
+        cout << "Graf ne postoji!" << endl;
+        return;
+    }
+
+    cout << "Kruskalov algoritam..." << endl;
+    graf->kruskalov_algoritam();
+}
+
+void flojdov_algoritam(Graf* graf) {
+    if (graf == nullptr) {
+        cout << "Graf ne postoji!" << endl;
+        return;
+    }
+
+    cout << "Flojdov algoritam..." << endl;
+    graf->flojdov_algoritam();
+}
+
+void BFS(Graf* graf) {
+    if (graf == nullptr) {
+        cout << "Graf ne postoji!" << endl;
+        return;
+    }
+
+    cout << "BFS pretraga..." << endl;
+    graf->BFS();
+}
+
+void DFS(Graf* graf) {
+    if (graf == nullptr) {
+        cout << "Graf ne postoji!" << endl;
+        return;
+    }
+
+    cout << "DFS pretraga..." << endl;
+    graf->DFS();
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 /// Glavni program
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -312,6 +462,10 @@ int main()
         cout << "\t5. Obrisi granu izmedju dva cvora" << endl;
         cout << "\t6. Ispisi reprezentaciju grafa" << endl;
         cout << "\t7. Obrisi graf" << endl;
+        cout << "\t8. Kruskalov algoritam" << endl;
+        cout << "\t9. Flojdov algoritam" << endl;
+        cout << "\t10. BFS pretraga" << endl;
+        cout << "\t11. DFS pretraga" << endl;
         cout << "\t0. Izadji iz programa (EXIT)" << endl;
         cout << "Unesite zeljeni broj i pritisnite ENTER... ";
 
@@ -343,9 +497,20 @@ int main()
         case 7:
             obrisi_graf(&graf);
             break;
+        case 8:
+            kruskalov_algoritam(graf);
+            break;
+        case 9:
+            flojdov_algoritam(graf);
+            break;
+        case 10:
+            BFS(graf);
+            break;
+        case 11:
+            DFS(graf);
+            break;
         default:
-            cout << "Nepravilan izbor opcije.";
-            exit_flag = true;
+            cout << "Nepravilan izbor opcije." << endl;
         }
     }
 
