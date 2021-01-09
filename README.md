@@ -1,5 +1,5 @@
 # graph
-C++ software package with command-line interface implementating undirected weighted graph structure using adjacency matrix representation.
+C++ software package with command-line interface implementating undirected weighted graphs using adjacency matrix representation, as well as some of the most commonly used algorithms.
 
 Homework/project in **Algorithms and Data Structures (13E112ASP)** at University of Belgrade, School of Electrical Engineering.
 
