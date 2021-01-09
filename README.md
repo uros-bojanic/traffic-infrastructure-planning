@@ -5,9 +5,10 @@ Homework/project in **Algorithms and Data Structures (13E112ASP)** at University
 
 ## dz1.cpp
 * Graph representation
-* Kruskal's algorithm
 * BFS
 * DFS
+* Kruskal's algorithm
+* Floyd's algorithm
 
 ## dz2.cpp
 * Prim's algorithm
