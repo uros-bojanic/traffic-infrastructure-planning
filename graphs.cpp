@@ -128,7 +128,6 @@ void Graf::ispisi_reprezentaciju() {
 
 // DODATAK
 void Graf::kruskalov_algoritam() {
-    vector<int> set_pripadnosti(n);
     priority_queue<pair<int, pair<int, int>>> grane_sve;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
@@ -137,9 +136,20 @@ void Graf::kruskalov_algoritam() {
             }
         }
     }
+    stack<pair<int, pair<int, int>>> grane_sort;
     while (!grane_sve.empty()) {
-        cout << grane_sve.top().second.first << "-" << grane_sve.top().second.second << " (" << grane_sve.top().first << ")" << endl;
+        grane_sort.push(grane_sve.top());
         grane_sve.pop();
+    }
+    unordered_set<int> set_pripadnosti;
+    while (set_pripadnosti.size() != n) {
+        int tezina = grane_sort.top().first;
+        int cvor_1 = grane_sort.top().second.first;
+        int cvor_2 = grane_sort.top().second.second;
+        cout << cvorovi[cvor_1] << "-" << cvorovi[cvor_2] << " (" << tezina << ")" << endl;
+        set_pripadnosti.insert(cvor_1);
+        set_pripadnosti.insert(cvor_2);
+        grane_sort.pop();
     }
 }
 
@@ -148,7 +158,9 @@ void Graf::flojdov_algoritam() {
     for (int k = 0; k < n; k++) {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (rastojanja[i][j] > rastojanja[i][k] + rastojanja[k][j]) {
+                if (rastojanja[i][j] > rastojanja[i][k] + rastojanja[k][j]
+                    && rastojanja[i][k] < INT_MAX
+                    && rastojanja[k][j] < INT_MAX) {
                     rastojanja[i][j] = rastojanja[i][k] + rastojanja[k][j];
                 }
             }
